@@ -1,0 +1,104 @@
+import random
+
+# num%의 확률로 1, 100-num%의 확률로 0을 출력
+def percentage(num):
+    percent = random.randrange(1, 100)
+    if num >= percent:
+        return 1
+    else:
+        return 0
+
+# x에 대한 등식을 문자화하는 함수
+def equation(coefficient, value, flag):
+
+    # 등식의 좌변을 문자화 한다
+    if flag == 4:
+        expression = "0"
+    else:
+        exponent = ["³", "²"]
+        expression = ""
+        for j in range(4):
+            num = coefficient.pop(-1)
+            if num:
+                if num > 0:
+                    expression += "+"
+                else:
+                    expression += "-"
+                if abs(num) != 1 and j < 4:
+                    expression += str(abs(num))
+                if j != 3:
+                    expression += "x"
+                elif abs(num) == 1:
+                    expression += str(abs(num))
+                try:
+                    expression += exponent[j]
+                except:
+                    pass
+
+    equation = ""
+    for x in range(len(expression)):
+        if not(x == 0 and expression[x] == "+"):
+            equation += expression[x]
+
+    # 등식의 우변을 생성한뒤 좌변과 더한다
+    equation += "="
+    if value > 0:
+        equation += "a(x+{})³+b(x+{})²+c(x+{})+d".format(value, value, value, value)
+    else:
+        equation += "a(x{})³+b(x{})²+c(x{})+d".format(value, value, value, value)
+
+    return equation
+
+# 문제의 답인 값을 출력할 때 사용되는 식
+def caculate(coefficient, value):
+    if len(coefficient) == 3:
+        coefficient = [coefficient[2], coefficient[1], coefficient[0]]
+    if len(coefficient) == 2:
+        coefficient = [coefficient[1], coefficient[0]]
+    fir = [coefficient[-1]]
+    for x in range(len(coefficient)):
+        if x != 0:
+            fir.append(fir[-1]*value + coefficient[len(coefficient)-1-x])
+    return fir
+
+# 70퍼센트 확률로 x의 i번째 지수인 수가 나올지 결정된다
+# 리스트 coefficient에 x의 i번째 지수인 수의 계수가 들어간다
+flag = 0
+coefficient = []
+for i in range(4):
+    percent = percentage(70)
+    if percent:
+        coefficient.append(random.randrange(-9, 9))
+    else:
+        coefficient.append(0)
+        flag += 1
+
+value = 0
+while value == 0:
+    value = random.randrange(-3, 3)
+
+temp = []
+n = coefficient
+for x in range(3):
+    n = caculate(n, value)
+    temp.append(n.pop(-1))
+    if x == 2:
+        temp.append(n[0])
+
+sentence = equation(coefficient, value, flag)
+
+# 문제를 출력해준다
+print("등식 {}가 x에 대한 항등식일 때, 상수 a, b, c, d의 값을 구하시오.".format(sentence))
+
+print("answer: {}, {}, {}, {}".format(temp[3], temp[2], temp[1], temp[0]))
+# 문제를 입력한뒤 정답 여부를 확인한다.
+while True:
+    try:
+        a, b, c, d = map(int, input("답: ").split())
+        if a == temp[3] and b == temp[2] and c == temp[1] and d == temp[0]:
+            print("정답입니다")
+            break
+        else:
+            print("틀렸습니다")
+    except:
+        print("다시 입력해주세요")
