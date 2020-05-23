@@ -80,7 +80,7 @@ while value == 0:
 temp = []
 n = coefficient
 for x in range(3):
-    n = caculate(n, value)
+    n = caculate(n, -value)
     temp.append(n.pop(-1))
     if x == 2:
         temp.append(n[0])
